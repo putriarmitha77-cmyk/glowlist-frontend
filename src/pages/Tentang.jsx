@@ -4,21 +4,20 @@ export default function Tentang() {
             <div className="row text-start">
                 <div className="col-10">
                     <h2 className="fw-bold mb-3">Tentang Saya </h2>
-                    <h4>Haii, Saya Andina Armitha </h4>
+                    <h4>🌷 Hai, Saya Andina</h4>
 
-                    <p>
-                        nama saya Andina, siswi kelas XII RPL 1. Saya memiliki keterkaitan pada dunia skincare karena
-                        saya senang mempelajari cara merawat kulit serta mengenal berbagai produk yang sesuai dengan
-                        kebutuhan kulit.
-                    </p>
+                <p>
+                     Siswi XII RPL 1 yang memiliki ketertarikan pada dunia skincare. Saya senang
+                     mempelajari perawatan kulit dan mengenal berbagai produk yang sesuai dengan
+                     kebutuhan setiap jenis kulit.
+                </p>
 
-                    <p>
-                        Saya juga menyukai skincare karena dapat membantu menjaga kesehatan dan kebersihan kulit.
-                        Dengan merawat kulit secara rutin, saya merasa lebih percaya diri dan nyaman dalam menjalani
-                        aktivitas sehari-hari.
-                    </p>
+                <p>
+                    Bagi saya, skincare bukan hanya tentang penampilan, tetapi juga bentuk
+                    self-care yang membuat saya lebih percaya diri setiap hari. ✨
+                </p>
                 </div>
             </div>
         </div>
-    )
+    );
 }
