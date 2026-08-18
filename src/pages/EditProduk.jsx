@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function AddProduk() {
+export default function EditProduk() {
+    const { id } = useParams();
     const navigate = useNavigate();
 
-    // Data form produk
     const [formData, setFormData] = useState({
         judul: "",
         deskripsi: "",
@@ -12,10 +12,50 @@ export default function AddProduk() {
         id_kategori: "",
     });
 
-    // Data kategori dari database
     const [kategori, setKategori] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    // Mengambil data kategori dari backend
+    // =========================
+    // AMBIL DATA PRODUK
+    // =========================
+    useEffect(() => {
+        const ambilProduk = async () => {
+            try {
+                const response = await fetch(
+                    `http://localhost:3001/produk/${id}`
+                );
+
+                if (!response.ok) {
+                    throw new Error("Gagal mengambil data produk");
+                }
+
+                const data = await response.json();
+
+                console.log("DATA PRODUK:", data);
+
+                if (data.length > 0) {
+                    const produk = data[0];
+
+                    setFormData({
+                        judul: produk.judul || "",
+                        deskripsi: produk.deskripsi || "",
+                        harga: produk.harga || "",
+                        id_kategori: produk.id_kategori || "",
+                    });
+                }
+            } catch (error) {
+                console.error("ERROR PRODUK:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        ambilProduk();
+    }, [id]);
+
+    // =========================
+    // AMBIL DATA KATEGORI
+    // =========================
     useEffect(() => {
         const ambilKategori = async () => {
             try {
@@ -23,28 +63,26 @@ export default function AddProduk() {
                     "http://localhost:3001/kategori"
                 );
 
-                console.log("STATUS:", response.status);
-
                 if (!response.ok) {
-                    throw new Error("Gagal mengambil data kategori");
+                    throw new Error("Gagal mengambil kategori");
                 }
 
                 const data = await response.json();
 
                 console.log("DATA KATEGORI:", data);
-                console.log("JUMLAH KATEGORI:", data.length);
 
                 setKategori(data);
             } catch (error) {
                 console.error("ERROR KATEGORI:", error);
-                alert("Gagal mengambil data kategori");
             }
         };
 
         ambilKategori();
     }, []);
 
-    // Menangani perubahan input
+    // =========================
+    // HANDLE INPUT
+    // =========================
     const handleChange = (e) => {
         setFormData({
             ...formData,
@@ -52,15 +90,19 @@ export default function AddProduk() {
         });
     };
 
-    // Menyimpan produk
+    // =========================
+    // UPDATE PRODUK
+    // =========================
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        console.log("DATA YANG DIKIRIM:", formData);
+
         try {
             const response = await fetch(
-                "http://localhost:3001/produk",
+                `http://localhost:3001/produk/${id}`,
                 {
-                    method: "POST",
+                    method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -70,37 +112,52 @@ export default function AddProduk() {
 
             const data = await response.json();
 
-            if (response.ok) {
-                alert("Produk berhasil ditambahkan");
+            console.log("RESPONSE SERVER:", data);
 
-                // Kembali ke halaman produk
+            if (response.ok) {
+                alert("Produk berhasil diperbarui!");
+
                 navigate("/produk");
             } else {
                 alert(
                     data.message ||
-                    "Gagal menambahkan produk"
+                    "Gagal memperbarui produk"
                 );
             }
         } catch (error) {
-            console.error("ERROR:", error);
+            console.error("ERROR UPDATE:", error);
 
             alert(
-                "Terjadi kesalahan saat menambahkan produk"
+                "Terjadi kesalahan saat memperbarui produk"
             );
         }
     };
 
+    // =========================
+    // LOADING
+    // =========================
+    if (loading) {
+        return (
+            <div className="container mt-4">
+                Sedang memuat data...
+            </div>
+        );
+    }
+
+    // =========================
+    // FORM
+    // =========================
     return (
         <div className="container mt-4">
 
-            <h2>✨ Tambah Produk Baru 🛍️</h2>
+            <h2>✏️ Edit Produk</h2>
 
             <form
                 onSubmit={handleSubmit}
                 className="card p-4 shadow-sm"
             >
 
-                {/* ================= JUDUL ================= */}
+                {/* JUDUL */}
                 <div className="mb-3">
                     <label className="form-label">
                         Judul Produk
@@ -118,7 +175,7 @@ export default function AddProduk() {
                 </div>
 
 
-                {/* ================= DESKRIPSI ================= */}
+                {/* DESKRIPSI */}
                 <div className="mb-3">
                     <label className="form-label">
                         Deskripsi Produk
@@ -131,12 +188,11 @@ export default function AddProduk() {
                         className="form-control"
                         placeholder="Masukkan Deskripsi Produk"
                         rows="4"
-                        required
                     ></textarea>
                 </div>
 
 
-                {/* ================= HARGA ================= */}
+                {/* HARGA */}
                 <div className="mb-3">
                     <label className="form-label">
                         Harga Produk
@@ -149,13 +205,12 @@ export default function AddProduk() {
                         onChange={handleChange}
                         className="form-control"
                         placeholder="Masukkan Harga Produk"
-                        min="0"
                         required
                     />
                 </div>
 
 
-                {/* ================= KATEGORI ================= */}
+                {/* KATEGORI */}
                 <div className="mb-3">
                     <label className="form-label">
                         Kategori Produk
@@ -168,7 +223,6 @@ export default function AddProduk() {
                         className="form-select"
                         required
                     >
-
                         <option value="">
                             -- Pilih Kategori --
                         </option>
@@ -181,18 +235,27 @@ export default function AddProduk() {
                                 {item.kategori}
                             </option>
                         ))}
-
                     </select>
                 </div>
 
 
-                {/* ================= TOMBOL ================= */}
-                <button
-                    type="submit"
-                    className="btn btn-success"
-                >
-                    Simpan Produk
-                </button>
+                {/* TOMBOL */}
+                <div>
+                    <button
+                        type="submit"
+                        className="btn btn-success me-2"
+                    >
+                        Simpan Perubahan
+                    </button>
+
+                    <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={() => navigate("/produk")}
+                    >
+                        Batal
+                    </button>
+                </div>
 
             </form>
         </div>
