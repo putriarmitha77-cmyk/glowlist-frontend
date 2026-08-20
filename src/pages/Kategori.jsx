@@ -53,9 +53,6 @@ return (
     <div className="container mt-4">
         <div className="d-flex justify-content-between align-items-center mb-3">
             <h2>✦ Daftar Kategori Glowlist ✦</h2>
-            <Link to="/kategori/tambah" className="btn btn-primary">
-            Tambah Kategori
-            </Link>
         </div>
 
     <table className="table table-bordered table-striped">

@@ -29,6 +29,9 @@ export default function Produk() {
             try {
                 const res = await fetch(`http://localhost:3001/produk/${id}`, {
                     method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
                 });
                 if (res.ok) {
                     alert("Produk berhasil dihapus");
