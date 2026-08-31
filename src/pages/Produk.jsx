@@ -59,7 +59,7 @@ return (
         <div className="d-flex justify-content-between align-items-center mb-3">
             <h2>🌷 Daftar Produk Glowlist</h2>
             <Link to="/produk/tambah" className="btn btn-primary">
-            Tambah Produk
+            T + Tambah Produk
             </Link>
         </div>
 
@@ -67,6 +67,7 @@ return (
         <thead className="table-primary">
             <tr>
                 <th>ID</th>
+                <th>Foto</th>
                 <th>Judul</th>
                 <th>Deskripsi</th>
                 <th>Harga</th>
@@ -79,6 +80,18 @@ return (
                 produk.map((item) => (
                     <tr key={item.id_produk}>
                         <td>{item.id_produk}</td>
+                        <td>
+                            {item.name_file ? (
+                                <img
+                                src={`http://localhost:3001/uploads/${item.name_file}`}
+                                alt={item.judul}
+                                width="70"
+                                className="rounded"
+                                />
+                            ) : ( 
+                                <span className="text-muted">Tidak Ada foto gaisss...</span>
+                            )}
+                        </td>
                         <td>{item.judul}</td>
                         <td>{item.deskripsi}</td>
                         <td>Rp {item.harga}</td>

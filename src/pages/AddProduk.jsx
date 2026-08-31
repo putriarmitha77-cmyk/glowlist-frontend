@@ -11,6 +11,7 @@ export default function AddProduk() {
         harga: "",
         id_kategori: "",
     });
+    const [file, setFile] = useState(null);
 
     // Data kategori dari database
     const [kategori, setKategori] = useState([]);
@@ -56,28 +57,41 @@ export default function AddProduk() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const response = await fetch(
-                "http://localhost:3001/produk",
-                {
+        if (file && file.size > 2 * 1024 * 1024) {
+            alert("Ukuran file terlalu besar, maksimal 2MB");
+            return;
+        }
+
+        
+            const data = new FormData();
+
+            data.append("judul", formData.judul);
+            data.append("deskripsi", formData.deskripsi);
+            data.append("harga", formData.harga);
+            data.append("id_kategori", formData.id_kategori);
+
+
+            if (file) {
+                data.append("file", file);
+            }
+
+        
+            
+            try {
+            const response = await fetch("http://localhost:3001/produk", {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${localStorage.getItem("token")}`,
                     },
-                    body: JSON.stringify(formData),
-                }
-            );
+                    body: data,
+                 });
 
-            const data = await response.json();
-
+        
             if (response.ok) {
                 alert("Produk berhasil ditambahkan");
-
-                // Kembali ke halaman produk
                 navigate("/produk");
             } else {
                 alert(
-                    data.message ||
                     "Gagal menambahkan produk"
                 );
             }
@@ -88,7 +102,9 @@ export default function AddProduk() {
                 "Terjadi kesalahan saat menambahkan produk"
             );
         }
+       
     };
+
 
     return (
         <div className="container mt-4">
@@ -183,6 +199,19 @@ export default function AddProduk() {
                         ))}
 
                     </select>
+                </div>
+                {/*================FOTO=============*/}
+                <div className="mb-3">
+                    <label className="form-label">
+                        Foto Produk
+                    </label>
+                    <input
+                    type="file"
+                    accept="image/*"
+                    onChange={ (e) => setFile(e.target.files[0])}
+                    className="form-control"
+                    required
+                    />
                 </div>
 
 
